@@ -1,0 +1,31 @@
+{
+  "indexes": [
+    { "collectionGroup": "courses",     "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "enrollmentOpen", "order": "ASCENDING" }, { "fieldPath": "startDate", "order": "DESCENDING" }] },
+    { "collectionGroup": "courses",     "fields": [{ "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "courses",     "fields": [{ "fieldPath": "accessLevel", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "courseLessons","fields": [{ "fieldPath": "courseId", "order": "ASCENDING" }, { "fieldPath": "order", "order": "ASCENDING" }] },
+    { "collectionGroup": "courseEnrollments","fields": [{ "fieldPath": "userId", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "courseEnrollments","fields": [{ "fieldPath": "courseId", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "news",        "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "publishAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "news",        "fields": [{ "fieldPath": "category", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "publishAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "downloads",   "fields": [{ "fieldPath": "category", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "downloads",   "fields": [{ "fieldPath": "accessLevel", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "communityPosts","fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "communityPosts","fields": [{ "fieldPath": "category", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "communityPosts","fields": [{ "fieldPath": "authorId", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "communityComments","fields": [{ "fieldPath": "postId", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "ASCENDING" }] },
+    { "collectionGroup": "prompts",     "fields": [{ "fieldPath": "tool", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "prompts",     "fields": [{ "fieldPath": "categoryId", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "aiArticles",  "fields": [{ "fieldPath": "tool", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "aiArticles",  "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "publishAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "payments",    "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "payments",    "fields": [{ "fieldPath": "userId", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "events",      "fields": [{ "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "startAt", "order": "ASCENDING" }] },
+    { "collectionGroup": "menus",       "fields": [{ "fieldPath": "location", "order": "ASCENDING" }, { "fieldPath": "visible", "order": "ASCENDING" }, { "fieldPath": "order", "order": "ASCENDING" }] },
+    { "collectionGroup": "banners",     "fields": [{ "fieldPath": "position", "order": "ASCENDING" }, { "fieldPath": "active", "order": "ASCENDING" }, { "fieldPath": "order", "order": "ASCENDING" }] },
+    { "collectionGroup": "notifications","fields": [{ "fieldPath": "userId", "order": "ASCENDING" }, { "fieldPath": "read", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "vipMembers",  "fields": [{ "fieldPath": "province", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] },
+    { "collectionGroup": "users",       "fields": [{ "fieldPath": "role", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }] }
+  ],
+  "fieldOverrides": []
+}

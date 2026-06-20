@@ -1,0 +1,64 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isSignedIn() { return request.auth != null; }
+    function role() { return request.auth.token.role; }
+    function atLeastStaff() { return isSignedIn() && role() in ['staff', 'admin', 'superadmin']; }
+    function atLeastAdmin() { return isSignedIn() && role() in ['admin', 'superadmin']; }
+    function isImage() { return request.resource.contentType.matches('image/.*'); }
+    function maxMB(n) { return request.resource.size < n * 1024 * 1024; }
+
+    // Public read assets (logos, banners, course covers)
+    match /public/{allPaths=**} {
+      allow read: if true;
+      allow write: if atLeastStaff();
+    }
+
+    // Site assets (logo, favicon, theme images)
+    match /site/{allPaths=**} {
+      allow read: if true;
+      allow write: if atLeastAdmin();
+    }
+
+    // User profile photos
+    match /users/{uid}/{file} {
+      allow read: if true;
+      allow write: if request.auth.uid == uid && isImage() && maxMB(5);
+    }
+
+    // Payment slips
+    match /slips/{uid}/{file} {
+      allow read: if request.auth.uid == uid || atLeastStaff();
+      allow write: if request.auth.uid == uid && isImage() && maxMB(5);
+    }
+
+    // Community media (images & videos)
+    match /community/{uid}/{file} {
+      allow read: if true;
+      allow write: if request.auth.uid == uid
+                   && (isImage() || request.resource.contentType.matches('video/.*'))
+                   && maxMB(50);
+    }
+
+    // Download files
+    match /downloads/{allPaths=**} {
+      allow read: if true;
+      allow write: if atLeastStaff();
+    }
+
+    // LMS content (lesson videos, PDFs)
+    match /lms/{allPaths=**} {
+      allow read: if isSignedIn();
+      allow write: if atLeastStaff();
+    }
+
+    // Certificate generated files
+    match /certificates/{allPaths=**} {
+      allow read: if true;
+      allow write: if false; // written by Cloud Function only
+    }
+
+    // Default deny
+    match /{allPaths=**} { allow read, write: if false; }
+  }
+}

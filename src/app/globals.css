@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
+/* ─── Neomorphism Education Platform – Design Tokens ─── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand */
+  --color-primary:   #2563EB;
+  --color-secondary: #38BDF8;
+  --color-accent:    #06B6D4;
+  --color-success:   #22C55E;
+  --color-warning:   #F59E0B;
+  --color-error:     #EF4444;
+
+  /* Surface */
+  --color-bg:        #EEF2F7;
+  --color-card:      #F8FAFC;
+  --color-text:      #0F172A;
+  --color-text-muted:#64748B;
+  --color-border:    #E2E8F0;
+
+  /* Neomorphism */
+  --neo-light:       #FFFFFF;
+  --neo-dark:        #C8D0DD;
+  --shadow-neo:      8px 8px 18px var(--neo-dark), -8px -8px 18px var(--neo-light);
+  --shadow-neo-sm:   4px 4px 10px var(--neo-dark), -4px -4px 10px var(--neo-light);
+  --shadow-neo-inset:inset 5px 5px 12px var(--neo-dark), inset -5px -5px 12px var(--neo-light);
+  --shadow-float:    0 12px 32px rgba(37,99,235,.14);
+
+  /* Glassmorphism */
+  --glass-bg:        rgba(248,250,252,.65);
+  --glass-border:    rgba(255,255,255,.6);
+  --glass-blur:      16px;
+
+  /* Shape */
+  --radius:    1.5rem;   /* 24px */
+  --radius-sm: 0.875rem; /* 14px */
+  --radius-lg: 2rem;     /* 32px */
+
+  /* Typography */
+  --font-heading: 'Kanit', sans-serif;
+  --font-body:    'Sarabun', sans-serif;
 }
 
+/* ─── Tailwind v4 theme mapping ─── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+
+  --font-sans:    var(--font-body);
+  --font-heading: var(--font-heading);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ─── Global base ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; }
+
+/* ─── Utility classes ─── */
+.neo-card {
+  background: var(--color-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-neo);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.neo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-float);
+}
+
+.neo-btn {
+  box-shadow: var(--shadow-neo-sm);
+  border-radius: var(--radius-sm);
+  transition: all 0.2s ease;
+}
+.neo-btn:active {
+  box-shadow: var(--shadow-neo-inset);
+  transform: scale(0.98);
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--neo-dark); border-radius: 3px; }
+
+/* ─── Focus visible ─── */
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

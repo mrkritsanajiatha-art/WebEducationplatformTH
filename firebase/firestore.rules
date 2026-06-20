@@ -1,0 +1,171 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Helpers ─────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function role() {
+      return request.auth.token.role;
+    }
+    function atLeast(r) {
+      let order = {
+        'guest': 0, 'member': 1, 'vip': 2,
+        'staff': 3, 'admin': 4, 'superadmin': 5
+      };
+      return isSignedIn() && order[role()] >= order[r];
+    }
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    function unchanged(field) {
+      return request.resource.data[field] == resource.data[field];
+    }
+
+    // ─── settings (public read, admin write) ──────────────────────
+    match /settings/{doc} {
+      allow read: if true;
+      allow write: if atLeast('admin');
+    }
+
+    // ─── users ───────────────────────────────────────────────────
+    match /users/{uid} {
+      allow read: if isOwner(uid) || atLeast('staff');
+      allow update: if isOwner(uid)
+                    && unchanged('role')
+                    && unchanged('status')
+                    && unchanged('vipMemberId');
+      allow create, delete: if atLeast('admin');
+    }
+
+    // ─── vipMembers (read-only; written by Cloud Function/Admin SDK) ──
+    match /vipMembers/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ─── Courses & Learning ───────────────────────────────────────
+    match /courseCategories/{id} {
+      allow read: if true;
+      allow write: if atLeast('staff');
+    }
+    match /courses/{id} {
+      allow read: if true;
+      allow write: if atLeast('staff');
+    }
+    match /courseLessons/{id} {
+      allow read: if resource.data.isPreview == true || atLeast('member');
+      allow write: if atLeast('staff');
+    }
+    match /courseEnrollments/{id} {
+      allow read: if isOwner(resource.data.userId) || atLeast('staff');
+      allow create: if isOwner(request.resource.data.userId);
+      allow update, delete: if atLeast('staff');
+    }
+
+    // ─── Events ──────────────────────────────────────────────────
+    match /events/{id} {
+      allow read: if true;
+      allow write: if atLeast('staff');
+    }
+    match /eventRegistrations/{id} {
+      allow read: if isOwner(resource.data.userId) || atLeast('staff');
+      allow create: if isOwner(request.resource.data.userId);
+      allow update, delete: if atLeast('staff');
+    }
+
+    // ─── Payments ────────────────────────────────────────────────
+    match /payments/{id} {
+      allow read: if isOwner(resource.data.userId) || atLeast('staff');
+      allow create: if isOwner(request.resource.data.userId)
+                    && request.resource.data.status == 'pending';
+      allow update: if atLeast('staff');
+    }
+
+    // ─── Certificates ────────────────────────────────────────────
+    match /certificateTemplates/{id} {
+      allow read: if atLeast('staff');
+      allow write: if atLeast('admin');
+    }
+    match /certificates/{id} {
+      allow read: if true;
+      allow write: if atLeast('staff');
+    }
+
+    // ─── Content CMS ─────────────────────────────────────────────
+    match /news/{id} {
+      allow read: if resource.data.status == 'published' || atLeast('staff');
+      allow write: if atLeast('staff');
+    }
+    match /downloads/{id} {
+      allow read: if true;
+      allow write: if atLeast('staff');
+    }
+    match /aiArticles/{id} {
+      allow read: if resource.data.status == 'published' || atLeast('staff');
+      allow write: if atLeast('staff');
+    }
+    match /promptCategories/{id} {
+      allow read: if true;
+      allow write: if atLeast('staff');
+    }
+    match /prompts/{id} {
+      allow read: if true;
+      allow write: if atLeast('staff');
+    }
+
+    // ─── Community ───────────────────────────────────────────────
+    match /communityPosts/{id} {
+      allow read: if resource.data.status == 'published' || atLeast('staff');
+      allow create: if atLeast('member')
+                    && request.resource.data.authorId == request.auth.uid
+                    && request.resource.data.likeCount == 0;
+      allow update: if (isOwner(resource.data.authorId)
+                        && unchanged('likeCount')
+                        && unchanged('authorId'))
+                    || atLeast('staff');
+      allow delete: if isOwner(resource.data.authorId) || atLeast('staff');
+
+      match /likes/{uid} {
+        allow read: if true;
+        allow create, delete: if isOwner(uid);
+      }
+    }
+    match /communityComments/{id} {
+      allow read: if true;
+      allow create: if atLeast('member')
+                    && request.resource.data.authorId == request.auth.uid;
+      allow update: if isOwner(resource.data.authorId) || atLeast('staff');
+      allow delete: if isOwner(resource.data.authorId) || atLeast('staff');
+    }
+
+    // ─── User favorites ──────────────────────────────────────────
+    match /users/{uid}/favorites/{pid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    // ─── Notifications ───────────────────────────────────────────
+    match /notifications/{id} {
+      allow read: if isOwner(resource.data.userId) || resource.data.userId == null;
+      allow update: if isOwner(resource.data.userId);
+      allow create, delete: if atLeast('staff');
+    }
+
+    // ─── Website Builder ─────────────────────────────────────────
+    match /banners/{id}  { allow read: if true; allow write: if atLeast('admin'); }
+    match /menus/{id}    { allow read: if true; allow write: if atLeast('admin'); }
+    match /partners/{id} { allow read: if true; allow write: if atLeast('admin'); }
+    match /pages/{id} {
+      allow read: if resource.data.status == 'published' || atLeast('admin');
+      allow write: if atLeast('admin');
+    }
+
+    // ─── Analytics & Audit (admin read; Function write) ──────────
+    match /analytics/{id} { allow read: if atLeast('admin'); allow write: if false; }
+    match /auditLogs/{id} { allow read: if atLeast('admin'); allow write: if false; }
+
+    // ─── Default deny ────────────────────────────────────────────
+    match /{document=**} { allow read, write: if false; }
+  }
+}
