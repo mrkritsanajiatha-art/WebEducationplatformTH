@@ -20,32 +20,14 @@ const CATEGORIES = [
   { key: 'free', label: 'คอร์สฟรี' },
 ]
 
-const PLACEHOLDER: Course[] = [
-  { id: '1', title: 'พัฒนา PA ด้วย AI ยุคใหม่ สำหรับครูไทย', slug: '', summary: '', description: '', categoryId: 'pa', coverUrl: '', gallery: [], instructors: [{ name: 'อ.ดร.สมหวัง วิทยา', title: '', photoUrl: '', bio: '' }], price: 0, accessLevel: 'guest', startDate: null, endDate: null, zoomUrl: '', youtubeUrl: '', enrollmentOpen: true, capacity: 0, enrollCount: 3820, lessonCount: 12, durationMin: 360, status: 'published', tags: [], createdAt: null as never, updatedAt: null as never },
-  { id: '2', title: 'NotebookLM เพื่องานวิจัยในชั้นเรียน', slug: '', summary: '', description: '', categoryId: 'pa', coverUrl: '', gallery: [], instructors: [{ name: 'รศ.ดร.วิรัช ปัญญา', title: '', photoUrl: '', bio: '' }], price: 290, accessLevel: 'member', startDate: null, endDate: null, zoomUrl: '', youtubeUrl: '', enrollmentOpen: true, capacity: 0, enrollCount: 1250, lessonCount: 8, durationMin: 240, status: 'published', tags: [], createdAt: null as never, updatedAt: null as never },
-  { id: '3', title: 'Canva AI สำหรับครูยุคดิจิทัล สร้างสื่อสวยใน 10 นาที', slug: '', summary: '', description: '', categoryId: 'innovation', coverUrl: '', gallery: [], instructors: [{ name: 'อ.ชลิดา ออกแบบ', title: '', photoUrl: '', bio: '' }], price: 390, accessLevel: 'member', startDate: null, endDate: null, zoomUrl: '', youtubeUrl: '', enrollmentOpen: true, capacity: 0, enrollCount: 2100, lessonCount: 10, durationMin: 300, status: 'published', tags: [], createdAt: null as never, updatedAt: null as never },
-  { id: '4', title: 'Prompt Engineering สำหรับครู เขียนคำสั่ง AI ให้ปัง', slug: '', summary: '', description: '', categoryId: 'ai', coverUrl: '', gallery: [], instructors: [{ name: 'อ.รัตนา เทคโน', title: '', photoUrl: '', bio: '' }], price: 490, accessLevel: 'vip', startDate: null, endDate: null, zoomUrl: '', youtubeUrl: '', enrollmentOpen: true, capacity: 0, enrollCount: 980, lessonCount: 14, durationMin: 420, status: 'published', tags: [], createdAt: null as never, updatedAt: null as never },
-  { id: '5', title: 'วิจัยในชั้นเรียน 5 บท ทำได้จริงใน 1 เทอม', slug: '', summary: '', description: '', categoryId: 'pa', coverUrl: '', gallery: [], instructors: [{ name: 'ผศ.ดร.วิรัช ปัญญา', title: '', photoUrl: '', bio: '' }], price: 290, accessLevel: 'member', startDate: null, endDate: null, zoomUrl: '', youtubeUrl: '', enrollmentOpen: true, capacity: 0, enrollCount: 1680, lessonCount: 9, durationMin: 270, status: 'published', tags: [], createdAt: null as never, updatedAt: null as never },
-  { id: '6', title: 'ChatGPT สร้างแผนการสอน Active Learning', slug: '', summary: '', description: '', categoryId: 'ai', coverUrl: '', gallery: [], instructors: [{ name: 'อ.ดร.สมหวัง วิทยา', title: '', photoUrl: '', bio: '' }], price: 0, accessLevel: 'guest', startDate: null, endDate: null, zoomUrl: '', youtubeUrl: '', enrollmentOpen: true, capacity: 0, enrollCount: 4200, lessonCount: 11, durationMin: 330, status: 'published', tags: [], createdAt: null as never, updatedAt: null as never },
-]
-
-/* Deterministic pseudo-rating from id so cards look populated without real data */
-function seededRating(id: string) {
-  let n = 0
-  for (const ch of id) n = (n + ch.charCodeAt(0)) % 100
-  return 4.3 + (n % 7) / 10 // 4.3–4.9
-}
-
 function toCardData(c: Course, i: number): CourseCardData {
-  const badge = c.accessLevel === 'vip' ? 'VIP' : c.price === 0 ? 'ฟรี' : i < 2 ? 'ฮิต' : undefined
+  const badge = c.accessLevel === 'vip' ? 'VIP' : c.price === 0 ? 'ฟรี' : undefined
   return {
     href: c.slug ? `/courses/${c.slug}` : '#',
     title: c.title,
     instructor: c.instructors[0]?.name,
     org: 'สมาพันธ์แพลตฟอร์มฯ',
     price: c.price,
-    rating: seededRating(c.id),
-    reviews: c.enrollCount ? Math.round(c.enrollCount * 0.18) : undefined,
     learners: c.enrollCount || undefined,
     durationHrs: c.durationMin ? Math.round(c.durationMin / 60) : undefined,
     level: c.accessLevel === 'vip' ? 'ขั้นสูง' : 'ทุกระดับ',
@@ -64,8 +46,8 @@ export default function CoursesPage() {
 
   useEffect(() => {
     withFirestoreTimeout(getCoursesList({ status: 'published', maxItems: 24 }))
-      .then(data => setItems(data.length ? data : PLACEHOLDER))
-      .catch(() => setItems(PLACEHOLDER))
+      .then(data => setItems(data))
+      .catch(() => setItems([]))
       .finally(() => setLoading(false))
   }, [])
 
@@ -118,7 +100,7 @@ export default function CoursesPage() {
       </div>
 
       {/* Results count */}
-      {!loading && (
+      {!loading && filtered.length > 0 && (
         <p className="text-xs mb-4" style={{ color: 'var(--color-text-muted)' }}>
           พบ {filtered.length} หลักสูตร
         </p>
@@ -133,9 +115,24 @@ export default function CoursesPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-16 rounded-[var(--radius)] bg-[var(--color-card)]" style={{ border: 'var(--border-card)' }}>
-          <p className="font-semibold mb-1">ไม่พบหลักสูตรที่ตรงกัน</p>
-          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>ลองเปลี่ยนหมวดหมู่หรือคำค้นหา</p>
+        <div className="text-center py-16 px-4 rounded-[var(--radius)] bg-[var(--color-card)]" style={{ border: 'var(--border-card)' }}>
+          <div className="w-14 h-14 rounded-2xl mx-auto mb-4 flex items-center justify-center"
+            style={{ background: 'linear-gradient(135deg,#1A56DB,#0EA5E9)' }}>
+            <GraduationCap size={26} className="text-white" strokeWidth={1.5} />
+          </div>
+          {items.length === 0 ? (
+            <>
+              <p className="font-bold text-lg mb-1" style={{ fontFamily: 'var(--font-heading)' }}>หลักสูตรกำลังจะเปิดเร็วๆ นี้</p>
+              <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+                ทีมงานสมาพันธ์ฯ กำลังจัดเตรียมหลักสูตรคุณภาพ<br />ติดตามได้เร็วๆ นี้
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-bold text-lg mb-1" style={{ fontFamily: 'var(--font-heading)' }}>ไม่พบหลักสูตรที่ตรงกัน</p>
+              <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>ลองเปลี่ยนหมวดหมู่หรือคำค้นหา</p>
+            </>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

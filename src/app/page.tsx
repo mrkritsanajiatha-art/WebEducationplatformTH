@@ -2,11 +2,11 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
   Bot, GraduationCap, BookOpen, Crown, Users, Download,
-  Newspaper, Ticket, FileText, BarChart2, ChevronRight,
+  Newspaper, Ticket, BarChart2, ChevronRight,
   Sparkles,
 } from 'lucide-react'
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
-import { CourseCard, type CourseCardData } from '@/components/course/CourseCard'
+import { FeaturedCourses } from '@/components/course/FeaturedCourses'
 import { defaultSiteConfig } from '@/config/site'
 
 export const metadata: Metadata = {
@@ -37,7 +37,7 @@ const CAT_CARDS = [
   {
     title: 'AI & เทคโนโลยี',
     desc: 'เรียนรู้ AI ยุคใหม่ Gemini · ChatGPT · NotebookLM สำหรับครู',
-    count: '40+ หลักสูตร',
+    count: 'ดูหมวดนี้',
     Icon: Bot,
     bg: 'linear-gradient(135deg,#1E3A5F,#2563EB)',
     href: '/courses?cat=ai',
@@ -45,7 +45,7 @@ const CAT_CARDS = [
   {
     title: 'พัฒนา PA & วิจัย',
     desc: 'วิจัยในชั้นเรียน แผนการสอน ประเมินผล PA ม.7 ครบวงจร',
-    count: '25+ หลักสูตร',
+    count: 'ดูหมวดนี้',
     Icon: BarChart2,
     bg: 'linear-gradient(135deg,#0C4A2E,#059669)',
     href: '/courses?cat=pa',
@@ -53,7 +53,7 @@ const CAT_CARDS = [
   {
     title: 'นวัตกรรมการสอน',
     desc: 'เทคนิคใหม่ สื่อการสอน Active Learning ห้องเรียนยุคใหม่',
-    count: '30+ หลักสูตร',
+    count: 'ดูหมวดนี้',
     Icon: BookOpen,
     bg: 'linear-gradient(135deg,#312E81,#7C3AED)',
     href: '/courses?cat=innovation',
@@ -61,20 +61,13 @@ const CAT_CARDS = [
   {
     title: 'VIP พรีเมียม',
     desc: 'คอร์ส Exclusive เอกสาร Prompt สิทธิพิเศษเฉพาะสมาชิก VIP',
-    count: '1,200+ VIP',
+    count: 'สิทธิพิเศษ VIP',
     Icon: Crown,
     bg: 'linear-gradient(135deg,#78350F,#D97706)',
     href: '/vip',
   },
 ]
 
-/* ─── Featured courses ─── */
-const COURSES: CourseCardData[] = [
-  { href: '/courses', title: 'พัฒนา PA ด้วย AI ยุคใหม่ สำหรับครูไทย', instructor: 'อ.ดร.สมหวัง วิทยา', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 'free', rating: 4.9, reviews: 688, learners: 3820, durationHrs: 6, badge: 'ฮิต', Icon: Bot, accent: ['#1E3A8A', '#2563EB'] },
-  { href: '/courses', title: 'Prompt Engineering สำหรับครูไทย', instructor: 'อ.รัตนา เทคโน', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 490, rating: 4.7, reviews: 176, learners: 980, durationHrs: 7, badge: 'ใหม่', Icon: FileText, accent: ['#312E81', '#7C3AED'] },
-  { href: '/courses', title: 'วิจัยในชั้นเรียน 5 บท ทำได้จริง', instructor: 'ผศ.ดร.วิรัช ปัญญา', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 290, rating: 4.8, reviews: 302, learners: 1680, durationHrs: 5, badge: 'แนะนำ', Icon: BarChart2, accent: ['#0C4A2E', '#059669'] },
-  { href: '/courses', title: 'นวัตกรรมห้องเรียน 2567 Active Learning', instructor: 'อ.ชลิดา ออกแบบ', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 390, rating: 4.6, reviews: 210, learners: 2100, durationHrs: 5, badge: 'ฮิต', Icon: BookOpen, accent: ['#78350F', '#D97706'] },
-]
 
 const STATS = [
   { value: '5,000+', label: 'สมาชิก' },
@@ -229,21 +222,8 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* ── Featured Courses ── */}
-          <section className="px-3 sm:px-4 lg:px-5 pb-5">
-            <SectionHead title="หลักสูตรแนะนำ" sub="เริ่มเรียนได้เลยวันนี้" href="/courses" />
-
-            {/* Mobile: scroll */}
-            <div className="flex lg:hidden scroll-row">
-              {COURSES.map(c => (
-                <div key={c.title} className="w-52"><CourseCard data={c} /></div>
-              ))}
-            </div>
-            {/* Desktop: grid */}
-            <div className="hidden lg:grid grid-cols-4 gap-4">
-              {COURSES.map(c => <CourseCard key={c.title} data={c} />)}
-            </div>
-          </section>
+          {/* ── Featured Courses (real data only; hidden when empty) ── */}
+          <FeaturedCourses />
 
           {/* ── AI Hub highlight ── */}
           <section className="px-3 sm:px-4 lg:px-5 pb-5">
