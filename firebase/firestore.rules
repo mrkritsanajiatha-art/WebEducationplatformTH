@@ -22,6 +22,9 @@ service cloud.firestore {
     function unchanged(field) {
       return request.resource.data[field] == resource.data[field];
     }
+    function isStr(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
 
     // ─── settings (public read, admin write) ──────────────────────
     match /settings/{doc} {
@@ -32,17 +35,53 @@ service cloud.firestore {
     // ─── users ───────────────────────────────────────────────────
     match /users/{uid} {
       allow read: if isOwner(uid) || atLeast('staff');
+      allow create: if isOwner(uid);
       allow update: if isOwner(uid)
                     && unchanged('role')
                     && unchanged('status')
                     && unchanged('vipMemberId');
-      allow create, delete: if atLeast('admin');
+      allow delete: if atLeast('admin');
     }
 
     // ─── vipMembers (read-only; written by Cloud Function/Admin SDK) ──
     match /vipMembers/{id} {
       allow read: if true;
       allow write: if false;
+    }
+
+    // ─── vipVerifications (1 ชื่อ = 1 VIP lock; public, NO personal data) ──
+    // doc id == memberId. Public create-only enforces uniqueness; the public
+    // payload holds only name/source/status so it is safe to read by anyone.
+    match /vipVerifications/{memberId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(
+                         ['memberId','prefix','firstName','lastName','source','status','verifiedAt'])
+                    && request.resource.data.memberId == memberId
+                    && request.resource.data.status == 'verified'
+                    && isStr(request.resource.data.firstName, 1, 80)
+                    && isStr(request.resource.data.lastName, 0, 80)
+                    && isStr(request.resource.data.source, 1, 40);
+      allow update, delete: if atLeast('staff');
+    }
+
+    // ─── vipApplications (สมัคร VIP; contains PII → staff read only) ──
+    match /vipApplications/{id} {
+      allow read: if atLeast('staff');
+      allow create: if request.resource.data.status == 'pending'
+                    && isStr(request.resource.data.firstName, 1, 80)
+                    && isStr(request.resource.data.lastName, 1, 80)
+                    && isStr(request.resource.data.phone, 6, 20)
+                    // bound every free-text field to block storage-bloat abuse
+                    && isStr(request.resource.data.email, 0, 120)
+                    && isStr(request.resource.data.lineId, 0, 80)
+                    && isStr(request.resource.data.organization, 0, 160)
+                    && isStr(request.resource.data.province, 0, 80)
+                    && isStr(request.resource.data.position, 0, 120)
+                    && isStr(request.resource.data.note, 0, 500)
+                    && request.resource.data.amount is number
+                    && request.resource.data.amount >= 0
+                    && request.resource.data.amount <= 100000;
+      allow update, delete: if atLeast('staff');
     }
 
     // ─── Courses & Learning ───────────────────────────────────────

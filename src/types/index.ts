@@ -75,6 +75,42 @@ export interface VipMember {
   syncedAt: Timestamp
 }
 
+// ─── VIP Application (สมัคร VIP member) ───────────────────
+export type VipApplicationStatus = 'pending' | 'approved' | 'rejected'
+
+export interface VipApplication {
+  id: string
+  prefix: string
+  firstName: string
+  lastName: string
+  phone: string
+  email: string
+  lineId: string
+  organization: string
+  province: string
+  position: string
+  slipUrl: string | null
+  amount: number
+  note: string
+  /** Links an application to a verified member row, when applicable */
+  matchedMemberId: string | null
+  status: VipApplicationStatus
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── VIP Verification (1 ชื่อ = 1 VIP lock; no PII, public) ──
+export interface VipVerification {
+  /** doc id == memberId — enforces one verification per name row */
+  memberId: string
+  prefix: string
+  firstName: string
+  lastName: string
+  source: string
+  status: 'verified'
+  verifiedAt: Timestamp
+}
+
 // ─── Course ──────────────────────────────────────────────
 export type AccessLevel = 'guest' | 'member' | 'vip'
 export type CourseStatus = 'draft' | 'published' | 'archived'
@@ -212,6 +248,187 @@ export interface CommunityPost {
   shareCount: number
   status: 'published' | 'hidden' | 'removed'
   pinned: boolean
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── AI Article ──────────────────────────────────────────
+export interface AiArticle {
+  id: string
+  title: string
+  slug: string
+  summary: string
+  content: string
+  coverUrl: string
+  category: 'gemini' | 'chatgpt' | 'notebooklm' | 'canva' | 'other'
+  tags: string[]
+  accessLevel: AccessLevel
+  status: 'draft' | 'published'
+  viewCount: number
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Prompt ───────────────────────────────────────────────
+export interface Prompt {
+  id: string
+  title: string
+  content: string
+  category: 'teaching' | 'research' | 'admin' | 'creative' | 'ai'
+  description: string
+  tags: string[]
+  accessLevel: AccessLevel
+  useCount: number
+  status: 'draft' | 'published'
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Community Comment ────────────────────────────────────
+export interface CommunityComment {
+  id: string
+  postId: string
+  authorId: string
+  author: { name: string; photoUrl: string; role: UserRole }
+  content: string
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Event ───────────────────────────────────────────────
+export type EventStatus = 'draft' | 'published' | 'cancelled' | 'completed'
+export type EventType = 'online' | 'onsite' | 'hybrid'
+
+export interface Event {
+  id: string
+  title: string
+  slug: string
+  description: string
+  coverUrl: string
+  type: EventType
+  status: EventStatus
+  startAt: Timestamp | null
+  endAt: Timestamp | null
+  location: string
+  zoomUrl: string
+  capacity: number
+  registeredCount: number
+  price: number
+  accessLevel: AccessLevel
+  tags: string[]
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Event Registration ───────────────────────────────────
+export type RegistrationStatus = 'registered' | 'attended' | 'cancelled'
+
+export interface EventRegistration {
+  id: string
+  eventId: string
+  eventTitle: string
+  userId: string
+  userName: string
+  userEmail: string
+  status: RegistrationStatus
+  registeredAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Notification ─────────────────────────────────────────
+export type NotificationType = 'info' | 'success' | 'warning' | 'event' | 'payment' | 'course'
+
+export interface Notification {
+  id: string
+  userId: string | null
+  title: string
+  body: string
+  type: NotificationType
+  link: string
+  read: boolean
+  createdAt: Timestamp
+}
+
+// ─── Course Lesson ────────────────────────────────────────
+export interface CourseLesson {
+  id: string
+  courseId: string
+  title: string
+  description: string
+  type: LessonType
+  contentUrl: string
+  durationMin: number
+  order: number
+  isPreview: boolean
+  status: 'draft' | 'published'
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Course Enrollment ────────────────────────────────────
+export type EnrollmentStatus = 'pending' | 'active' | 'completed' | 'cancelled'
+
+export interface CourseEnrollment {
+  id: string
+  userId: string
+  courseId: string
+  courseTitle: string
+  courseCoverUrl: string
+  courseSlug: string
+  status: EnrollmentStatus
+  paymentId: string | null
+  progress: number
+  completedLessons: string[]
+  completedAt: Timestamp | null
+  certificateId: string | null
+  enrolledAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Payment ─────────────────────────────────────────────
+export type PaymentMethod = 'promptpay' | 'bank_transfer' | 'free'
+export type PaymentStatus = 'pending' | 'verifying' | 'approved' | 'rejected'
+
+export interface Payment {
+  id: string
+  userId: string
+  userEmail: string
+  userName: string
+  courseId: string
+  courseTitle: string
+  amount: number
+  method: PaymentMethod
+  status: PaymentStatus
+  slipUrl: string | null
+  note: string
+  verifiedBy: string | null
+  verifiedAt: Timestamp | null
+  createdAt: Timestamp
+  updatedAt: Timestamp
+}
+
+// ─── Certificate ──────────────────────────────────────────
+export interface Certificate {
+  id: string
+  userId: string
+  userName: string
+  userEmail: string
+  courseId: string
+  courseTitle: string
+  templateId: string
+  issuedAt: Timestamp
+}
+
+export interface CertificateTemplate {
+  id: string
+  courseId: string
+  name: string
+  bgImageUrl: string
+  logoUrl: string
+  signatureUrl: string
+  signerName: string
+  signerTitle: string
+  status: 'active' | 'inactive'
   createdAt: Timestamp
   updatedAt: Timestamp
 }

@@ -8,6 +8,7 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg'
   className?: string
   showName?: boolean
+  noLink?: boolean
 }
 
 const logoSize = { sm: 32, md: 44, lg: 56 }
@@ -19,13 +20,11 @@ export function Logo({
   size = 'md',
   className,
   showName = true,
+  noLink = false,
 }: LogoProps) {
   const px = logoSize[size]
-  return (
-    <Link
-      href="/"
-      className={cn('flex items-center gap-3 hover:opacity-90 transition-opacity', className)}
-    >
+  const inner = (
+    <>
       <Image
         src={logoUrl}
         alt={orgName}
@@ -40,6 +39,21 @@ export function Logo({
           {orgName}
         </span>
       )}
+    </>
+  )
+  if (noLink) {
+    return (
+      <span className={cn('flex items-center gap-3', className)}>
+        {inner}
+      </span>
+    )
+  }
+  return (
+    <Link
+      href="/"
+      className={cn('flex items-center gap-3 hover:opacity-90 transition-opacity', className)}
+    >
+      {inner}
     </Link>
   )
 }

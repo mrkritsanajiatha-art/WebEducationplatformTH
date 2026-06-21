@@ -3,6 +3,8 @@ export const COLLECTIONS = {
   settings:              'settings',
   users:                 'users',
   vipMembers:            'vipMembers',
+  vipApplications:       'vipApplications',
+  vipVerifications:      'vipVerifications',
   courseCategories:      'courseCategories',
   courses:               'courses',
   courseLessons:         'courseLessons',

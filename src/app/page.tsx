@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
+import {
+  Bot, GraduationCap, BookOpen, Crown, Users, Download,
+  Newspaper, Ticket, FileText, BarChart2, ChevronRight,
+  Sparkles, type LucideIcon,
+} from 'lucide-react'
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
-import { NeoCard } from '@/components/neo/NeoCard'
-import { NeoButton } from '@/components/neo/NeoButton'
-import { NeoStat } from '@/components/neo/NeoStat'
 import { defaultSiteConfig } from '@/config/site'
 
 export const metadata: Metadata = {
@@ -12,135 +14,329 @@ export const metadata: Metadata = {
   description: defaultSiteConfig.description,
 }
 
+/* ─── Sidebar nav data ─── */
+const SIDEBAR_TOP = [
+  { label: 'แนะนำสำหรับคุณ', Icon: Sparkles, href: '/' },
+  { label: 'สมัคร VIP member', Icon: Crown, href: '/vip/apply' },
+  { label: 'คอร์สทั้งหมด',   Icon: GraduationCap, href: '/courses' },
+]
+
+const SIDEBAR_CATS = [
+  { label: 'AI & เทคโนโลยี',       Icon: Bot,          href: '/courses?cat=ai' },
+  { label: 'พัฒนา PA & วิจัย',     Icon: BarChart2,    href: '/courses?cat=pa' },
+  { label: 'นวัตกรรมการสอน',      Icon: BookOpen,     href: '/courses?cat=innovation' },
+  { label: 'VIP & พรีเมียม',       Icon: Crown,        href: '/vip' },
+  { label: 'Community',            Icon: Users,        href: '/community' },
+  { label: 'ดาวน์โหลดฟรี',         Icon: Download,     href: '/downloads' },
+  { label: 'ข่าวสาร',               Icon: Newspaper,    href: '/news' },
+  { label: 'กิจกรรม & สัมมนา',     Icon: Ticket,       href: '/events' },
+]
+
+/* ─── Category cards (main grid) ─── */
+const CAT_CARDS = [
+  {
+    title: 'AI & เทคโนโลยี',
+    desc: 'เรียนรู้ AI ยุคใหม่ Gemini · ChatGPT · NotebookLM สำหรับครู',
+    count: '40+ หลักสูตร',
+    Icon: Bot,
+    bg: 'linear-gradient(135deg,#1E3A5F,#2563EB)',
+    href: '/courses?cat=ai',
+  },
+  {
+    title: 'พัฒนา PA & วิจัย',
+    desc: 'วิจัยในชั้นเรียน แผนการสอน ประเมินผล PA ม.7 ครบวงจร',
+    count: '25+ หลักสูตร',
+    Icon: BarChart2,
+    bg: 'linear-gradient(135deg,#0C4A2E,#059669)',
+    href: '/courses?cat=pa',
+  },
+  {
+    title: 'นวัตกรรมการสอน',
+    desc: 'เทคนิคใหม่ สื่อการสอน Active Learning ห้องเรียนยุคใหม่',
+    count: '30+ หลักสูตร',
+    Icon: BookOpen,
+    bg: 'linear-gradient(135deg,#312E81,#7C3AED)',
+    href: '/courses?cat=innovation',
+  },
+  {
+    title: 'VIP พรีเมียม',
+    desc: 'คอร์ส Exclusive เอกสาร Prompt สิทธิพิเศษเฉพาะสมาชิก VIP',
+    count: '1,200+ VIP',
+    Icon: Crown,
+    bg: 'linear-gradient(135deg,#78350F,#D97706)',
+    href: '/vip',
+  },
+]
+
+/* ─── Featured courses ─── */
+const COURSES = [
+  { title: 'พัฒนา PA ด้วย AI ยุคใหม่', instructor: 'อ.ดร.สมหวัง', price: 'ฟรี',  tag: 'ฮิต',    Icon: Bot },
+  { title: 'Prompt สำหรับครูไทย',       instructor: 'อ.รัตนา',     price: '฿490', tag: 'ใหม่',   Icon: FileText },
+  { title: 'วิจัยในชั้นเรียน 5 บท',    instructor: 'ผศ.ดร.วิรัช', price: '฿290', tag: 'แนะนำ',  Icon: BarChart2 },
+  { title: 'นวัตกรรมห้องเรียน 2567',   instructor: 'อ.ชลิดา',     price: '฿390', tag: 'ยอดฮิต', Icon: BookOpen },
+]
+
 const STATS = [
-  { label: 'สมาชิกทั้งหมด',  value: 5000, icon: '👥', color: 'primary'   as const },
-  { label: 'VIP Member',      value: 1200, icon: '👑', color: 'success'   as const },
-  { label: 'หลักสูตร',        value: 48,   icon: '🎓', color: 'secondary' as const },
-  { label: 'ผู้เรียนออนไลน์', value: 3800, icon: '📚', color: 'accent'    as const },
+  { value: '5,000+', label: 'สมาชิก' },
+  { value: '1,200+', label: 'VIP Member' },
+  { value: '48',     label: 'หลักสูตร' },
+  { value: '3,800+', label: 'ผู้เรียน' },
 ]
 
-const FEATURES = [
-  { icon: '🤖', title: 'AI Hub',            desc: 'รวมความรู้ AI สำหรับครู Gemini · ChatGPT · NotebookLM · Canva AI' },
-  { icon: '🎓', title: 'หลักสูตรอบรม',     desc: 'พัฒนาทักษะวิชาชีพ งานวิจัย นวัตกรรมกับวิทยากรผู้เชี่ยวชาญ' },
-  { icon: '📚', title: 'ห้องเรียนออนไลน์',  desc: 'เรียนที่ไหน เวลาไหนก็ได้ ผ่านวิดีโอ PDF เอกสาร ครบจบในที่เดียว' },
-  { icon: '👑', title: 'VIP Member',        desc: 'สิทธิประโยชน์พิเศษ คอร์สพรีเมียม ทรัพยากรแบบ exclusive' },
-  { icon: '👥', title: 'Community',          desc: 'แชร์ประสบการณ์ แลกเปลี่ยนเรียนรู้ในชุมชนครูทั่วประเทศ' },
-  { icon: '📄', title: 'Prompt Hub',         desc: 'คลัง prompt AI สำหรับครู ค้นหา คัดลอก นำไปใช้ได้ทันที' },
-]
+const TAG_STYLE: Record<string, { bg: string; color: string }> = {
+  ฮิต:   { bg: '#FEE2E2', color: '#B91C1C' },
+  ใหม่:  { bg: '#DCFCE7', color: '#15803D' },
+  แนะนำ: { bg: '#DBEAFE', color: '#1D4ED8' },
+  ยอดฮิต:{ bg: '#EDE9FE', color: '#6D28D9' },
+}
 
+/* ─── Page ─── */
 export default function HomePage() {
   return (
     <PublicPageLayout>
-      {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-[var(--color-bg)] to-cyan-50 py-20 lg:py-32">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-cyan-200/30 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
+      <div className="flex min-h-[calc(100vh-64px)]">
 
-        <div className="relative max-w-7xl mx-auto px-4 lg:px-6 grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-[var(--color-primary)] px-4 py-1.5 rounded-full text-sm font-medium border border-blue-100 mb-6">
-              <span>🚀</span> Education Super Platform ระดับประเทศ
-            </div>
-            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-[var(--color-text)] leading-tight mb-6" style={{ fontFamily: 'var(--font-heading)' }}>
-              พัฒนาครู
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]">
-                {' '}สู่อนาคต{' '}
-              </span>
-              ด้วย AI & นวัตกรรม
-            </h1>
-            <p className="text-lg text-[var(--color-text-muted)] leading-relaxed mb-8">
-              {defaultSiteConfig.description}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/courses"><NeoButton variant="primary" size="lg">เริ่มเรียนเลย</NeoButton></Link>
-              <Link href="/vip"><NeoButton variant="secondary" size="lg">ค้นหา VIP Member</NeoButton></Link>
-            </div>
-            <a
-              href={defaultSiteConfig.lineUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-3 bg-white [box-shadow:var(--shadow-neo-sm)] px-5 py-3 rounded-2xl hover:shadow-[var(--shadow-float)] transition-all"
-            >
-              <span className="text-2xl">💬</span>
-              <div>
-                <p className="font-semibold text-sm text-[var(--color-text)]">{defaultSiteConfig.lineOaName}</p>
-                <p className="text-xs text-[var(--color-text-muted)]">{defaultSiteConfig.lineId}</p>
-              </div>
-            </a>
-          </div>
+        {/* ══════════ SIDEBAR ══════════ */}
+        <aside className="hidden lg:flex flex-col w-56 xl:w-60 flex-shrink-0 sticky top-16 h-[calc(100vh-64px)] overflow-y-auto border-r"
+          style={{ borderColor: 'var(--color-border)', background: 'var(--color-bg)' }}>
+          <div className="p-3 flex flex-col gap-0.5">
 
-          <div className="hidden lg:flex items-center justify-center">
-            <div className="relative w-80 h-80">
-              <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-accent)] rounded-full opacity-10 blur-xl" />
-              <div className="relative z-10 flex items-center justify-center w-full h-full">
-                <Image
-                  src={defaultSiteConfig.logoUrl}
-                  alt={defaultSiteConfig.orgNameTh}
-                  width={240}
-                  height={240}
-                  className="object-contain drop-shadow-2xl"
-                  priority
-                  unoptimized
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Stats ─── */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-6 -mt-8 relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {STATS.map((s) => <NeoStat key={s.label} {...s} />)}
-        </div>
-      </section>
-
-      {/* ─── Features ─── */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-6 py-20">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-heading)' }}>บริการของเรา</h2>
-          <p className="text-[var(--color-text-muted)] text-lg max-w-2xl mx-auto">
-            ครบครันทุกมิติการพัฒนาวิชาชีพ จาก AI ถึงนวัตกรรม จากหลักสูตรถึงชุมชนครู
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {FEATURES.map((f) => (
-            <NeoCard key={f.title} className="flex flex-col gap-4">
-              <span className="text-4xl w-14 h-14 flex items-center justify-center bg-blue-50 rounded-2xl flex-shrink-0">{f.icon}</span>
-              <div>
-                <h3 className="font-bold text-lg mb-1">{f.title}</h3>
-                <p className="text-[var(--color-text-muted)] text-sm leading-relaxed">{f.desc}</p>
-              </div>
-            </NeoCard>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── CTA ─── */}
-      <section className="max-w-7xl mx-auto px-4 lg:px-6 pb-20">
-        <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] rounded-[var(--radius-lg)] p-10 lg:p-16 text-center text-white relative overflow-hidden">
-          <div className="relative z-10">
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-heading)' }}>
-              เริ่มต้นการเดินทางพัฒนาวิชาชีพ
-            </h2>
-            <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-              สมัครสมาชิกฟรี เข้าถึงหลักสูตร AI Hub Community และอีกมากมาย
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register">
-                <NeoButton variant="secondary" size="lg" className="!bg-white !text-[var(--color-primary)]">
-                  สมัครสมาชิกฟรี
-                </NeoButton>
+            {SIDEBAR_TOP.map(item => (
+              <Link key={item.label} href={item.href}>
+                <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all hover:bg-white/60"
+                  style={{ color: 'var(--color-primary)' }}>
+                  <item.Icon size={16} strokeWidth={1.8} />
+                  {item.label}
+                </div>
               </Link>
-              <Link href="/courses">
-                <NeoButton variant="ghost" size="lg" className="!text-white border border-white/30">
-                  ดูหลักสูตรทั้งหมด
-                </NeoButton>
+            ))}
+
+            <div className="mt-4 mb-2 px-3">
+              <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: 'var(--color-text-muted)' }}>
+                หมวดหมู่ยอดฮิต
+              </p>
+            </div>
+
+            {SIDEBAR_CATS.map(item => (
+              <Link key={item.label} href={item.href}>
+                <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all hover:bg-white/60"
+                  style={{ color: 'var(--color-text)' }}>
+                  <item.Icon size={15} strokeWidth={1.5} style={{ color: 'var(--color-text-muted)' }} />
+                  {item.label}
+                </div>
+              </Link>
+            ))}
+
+            {/* VIP promo box */}
+            <div className="mt-4 mx-1 rounded-xl p-3 text-white"
+              style={{ background: 'linear-gradient(135deg,#2563EB,#06B6D4)' }}>
+              <p className="text-xs font-bold mb-0.5">สมาพันธ์ VIP Plus</p>
+              <p className="text-[10px] opacity-80 leading-snug mb-2">ตลอดชีพ 499 บาท · คอร์สไม่จำกัด</p>
+              <Link href="/vip/apply">
+                <span className="text-[10px] font-bold bg-white/20 px-2 py-1 rounded-lg">สมัคร VIP →</span>
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </aside>
+
+        {/* ══════════ MAIN CONTENT ══════════ */}
+        <main className="flex-1 min-w-0 overflow-hidden">
+
+          {/* ── Banner ── */}
+          <section className="p-3 sm:p-4 lg:p-5">
+            <div className="relative rounded-2xl overflow-hidden"
+              style={{ background: 'linear-gradient(135deg,#1E3A8A 0%,#2563EB 45%,#0EA5E9 100%)', minHeight: 200 }}>
+
+              {/* Decorative circles */}
+              <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full opacity-10" style={{ background: '#FFFFFF' }} />
+              <div className="absolute -bottom-8 right-32 w-32 h-32 rounded-full opacity-10" style={{ background: '#06B6D4' }} />
+              <div className="absolute top-4 right-4 w-16 h-16 rounded-full opacity-15" style={{ background: '#FFFFFF' }} />
+
+              <div className="relative z-10 flex flex-col lg:flex-row items-center gap-6 p-6 sm:p-8 lg:p-10">
+
+                {/* Left text */}
+                <div className="flex-1 text-white">
+                  <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold mb-4">
+                    <Sparkles size={12} />
+                    แพลตฟอร์มพัฒนาครูอันดับ 1
+                  </div>
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3"
+                    style={{ fontFamily: 'var(--font-heading)' }}>
+                    พัฒนาวิชาชีพครู<br />
+                    <span style={{ color: '#7DD3FC' }}>สู่ยุค AI & นวัตกรรม</span>
+                  </h1>
+                  <p className="text-white/80 text-sm lg:text-base mb-5 max-w-sm leading-relaxed">
+                    สมาพันธ์แพลตฟอร์มการศึกษาและอาชีพแห่งประเทศไทย
+                    พร้อมหลักสูตร PA · AI · วิจัย ครบในที่เดียว
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <Link href="/courses">
+                      <button className="px-6 py-2.5 rounded-xl font-bold text-sm"
+                        style={{ background: '#FFFFFF', color: '#1D4ED8' }}>
+                        เริ่มเรียนฟรี →
+                      </button>
+                    </Link>
+                    <Link href="/register">
+                      <button className="px-6 py-2.5 rounded-xl font-bold text-sm border border-white/40 text-white">
+                        สมัครสมาชิก
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Right: stats */}
+                <div className="hidden sm:grid grid-cols-2 gap-3 flex-shrink-0">
+                  {STATS.map(s => (
+                    <div key={s.label} className="rounded-xl px-4 py-3 text-center" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}>
+                      <p className="text-xl font-extrabold text-white" style={{ fontFamily: 'var(--font-heading)' }}>{s.value}</p>
+                      <p className="text-[11px] text-white/70">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+            </div>
+          </section>
+
+          {/* ── Stats (mobile only) ── */}
+          <section className="sm:hidden px-3 pb-4">
+            <div className="grid grid-cols-2 gap-2">
+              {STATS.map(s => (
+                <div key={s.label} className="rounded-xl p-3 text-center"
+                  style={{ boxShadow: 'var(--shadow-neo-sm)', background: 'var(--color-bg)' }}>
+                  <p className="text-lg font-extrabold" style={{ color: 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}>{s.value}</p>
+                  <p className="text-[10px]" style={{ color: 'var(--color-text-muted)' }}>{s.label}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Category cards grid ── */}
+          <section className="px-3 sm:px-4 lg:px-5 pb-5">
+            <SectionHead title="หมวดหมู่ยอดนิยม" href="/courses" />
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {CAT_CARDS.map(c => (
+                <Link href={c.href} key={c.title}>
+                  <div className="rounded-2xl p-4 sm:p-5 flex flex-col gap-3 h-full active:scale-[0.97] transition-transform"
+                    style={{ background: c.bg, minHeight: 160 }}>
+                    <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                      <c.Icon size={18} strokeWidth={1.5} className="text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-white text-sm leading-snug mb-1">{c.title}</p>
+                      <p className="text-white/70 text-[11px] leading-relaxed hidden sm:block">{c.desc}</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/80 text-[11px] font-semibold">{c.count}</span>
+                      <ChevronRight size={14} className="text-white/60" />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Featured Courses ── */}
+          <section className="px-3 sm:px-4 lg:px-5 pb-5">
+            <SectionHead title="หลักสูตรแนะนำ" sub="เริ่มเรียนได้เลยวันนี้" href="/courses" />
+
+            {/* Mobile: scroll */}
+            <div className="lg:hidden scroll-row">
+              {COURSES.map(c => <CourseCard key={c.title} {...c} />)}
+            </div>
+            {/* Desktop: grid */}
+            <div className="hidden lg:grid grid-cols-4 gap-4">
+              {COURSES.map(c => <CourseCard key={c.title} {...c} desktop />)}
+            </div>
+          </section>
+
+          {/* ── AI Hub highlight ── */}
+          <section className="px-3 sm:px-4 lg:px-5 pb-5">
+            <Link href="/ai-hub">
+              <div className="rounded-2xl p-5 flex items-center gap-4 active:scale-[0.98] transition-transform"
+                style={{ background: 'linear-gradient(135deg,#EFF6FF,#E0F2FE)', boxShadow: 'var(--shadow-neo)' }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ boxShadow: 'var(--shadow-neo-inset)', background: 'var(--color-bg)' }}>
+                  <Bot size={24} strokeWidth={1.5} style={{ color: 'var(--color-primary)' }} />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-wider mb-0.5" style={{ color: 'var(--color-primary)' }}>เปิดให้ใช้งานแล้ว</p>
+                  <p className="font-bold" style={{ fontFamily: 'var(--font-heading)' }}>AI Hub สำหรับครู</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>Gemini · ChatGPT · NotebookLM · Canva AI</p>
+                </div>
+                <ChevronRight size={18} strokeWidth={1.5} style={{ color: 'var(--color-text-muted)' }} />
+              </div>
+            </Link>
+          </section>
+
+          {/* ── CTA ── */}
+          <section className="px-3 sm:px-4 lg:px-5 pb-10">
+            <div className="rounded-2xl p-6 sm:p-8 text-center"
+              style={{ background: 'linear-gradient(135deg,#1E40AF,#0EA5E9)', boxShadow: 'var(--shadow-neo-lg)' }}>
+              <p className="text-white/70 text-xs font-semibold uppercase tracking-widest mb-2">เริ่มต้นวันนี้</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2" style={{ fontFamily: 'var(--font-heading)' }}>
+                สมัครสมาชิกฟรี
+              </h2>
+              <p className="text-white/80 text-sm mb-6 max-w-md mx-auto">
+                เข้าถึงหลักสูตร · AI Hub · Community และอีกมากมาย — ไม่มีค่าใช้จ่าย
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link href="/register">
+                  <button className="px-8 py-3 rounded-xl font-bold text-base"
+                    style={{ background: '#FFFFFF', color: '#1D4ED8' }}>
+                    สมัครสมาชิกฟรี →
+                  </button>
+                </Link>
+                <Link href="/login">
+                  <button className="px-8 py-3 rounded-xl font-semibold text-white border border-white/30">
+                    เข้าสู่ระบบ
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </section>
+
+        </main>
+      </div>
     </PublicPageLayout>
+  )
+}
+
+/* ─── Section header ─── */
+function SectionHead({ title, sub, href }: { title: string; sub?: string; href: string }) {
+  return (
+    <div className="flex items-end justify-between mb-4">
+      <div>
+        <h2 className="text-lg font-bold" style={{ fontFamily: 'var(--font-heading)' }}>{title}</h2>
+        {sub && <p className="text-xs mt-0.5" style={{ color: 'var(--color-text-muted)' }}>{sub}</p>}
+      </div>
+      <Link href={href} className="flex items-center gap-0.5 text-xs font-semibold" style={{ color: 'var(--color-primary)' }}>
+        ดูทั้งหมด <ChevronRight size={13} strokeWidth={2} />
+      </Link>
+    </div>
+  )
+}
+
+/* ─── Course card ─── */
+function CourseCard({ title, instructor, price, tag, Icon, desktop = false }: {
+  title: string; instructor: string; price: string; tag: string; Icon: LucideIcon; desktop?: boolean
+}) {
+  const t = TAG_STYLE[tag] ?? { bg: '#E5E7EB', color: '#374151' }
+  return (
+    <div className={`${desktop ? '' : 'w-40 flex-shrink-0'} rounded-xl overflow-hidden active:scale-[0.97] transition-transform`}
+      style={{ boxShadow: 'var(--shadow-neo)', background: 'var(--color-bg)' }}>
+      <div className="h-24 flex items-center justify-center"
+        style={{ boxShadow: 'var(--shadow-neo-inset)', background: 'var(--color-bg)' }}>
+        <Icon size={34} strokeWidth={1.2} style={{ color: 'var(--color-primary)', opacity: 0.65 }} />
+      </div>
+      <div className="p-3">
+        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: t.bg, color: t.color }}>{tag}</span>
+        <p className="text-xs font-semibold leading-snug mt-1.5 mb-1 line-clamp-2">{title}</p>
+        <p className="text-[10px] mb-2" style={{ color: 'var(--color-text-muted)' }}>{instructor}</p>
+        <p className="text-sm font-extrabold" style={{ color: price === 'ฟรี' ? '#15803D' : 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}>
+          {price}
+        </p>
+      </div>
+    </div>
   )
 }

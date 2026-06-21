@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Kanit, Sarabun } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme/ThemeProvider'
+import { AuthProvider } from '@/components/auth/AuthProvider'
 import { defaultSiteConfig } from '@/config/site'
 
 const kanit = Kanit({
@@ -55,7 +56,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="th" className={`${kanit.variable} ${sarabun.variable}`} style={{ fontFamily: 'var(--font-sarabun), sans-serif' }}>
       <body className="min-h-screen antialiased">
         <ThemeProvider>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

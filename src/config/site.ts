@@ -38,6 +38,7 @@ export const defaultThemeConfig = {
 
 export const NAV_ITEMS = [
   { label: 'หน้าแรก',          href: '/',           icon: '🏠' },
+  { label: 'สมัคร VIP',        href: '/vip/apply',   icon: '⭐' },
   { label: 'VIP Member',       href: '/vip',         icon: '👑' },
   { label: 'หลักสูตรอบรม',     href: '/courses',     icon: '🎓' },
   { label: 'ห้องเรียนออนไลน์', href: '/learn',       icon: '📚' },
