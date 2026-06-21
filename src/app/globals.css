@@ -1,45 +1,50 @@
 @import "tailwindcss";
 
-/* ─── Super Neumorphism – Design Tokens ─── */
+/* ─── Flat / Coursera-style – Design Tokens ─── */
 :root {
   /* Brand */
-  --color-primary:   #2563EB;
-  --color-secondary: #38BDF8;
-  --color-accent:    #06B6D4;
-  --color-success:   #22C55E;
+  --color-primary:   #1A56DB;  /* academic blue */
+  --color-secondary: #2563EB;
+  --color-accent:    #0EA5E9;
+  --color-success:   #16A34A;
   --color-warning:   #F59E0B;
-  --color-error:     #EF4444;
+  --color-error:     #DC2626;
 
-  /* Surface — Blue/White Neo palette */
-  --color-bg:         #EEF3FF;
-  --color-card:       #EEF3FF;
+  /* Surface — flat: gray page, white cards */
+  --color-page:       #F4F6FA;  /* page background */
+  --color-bg:         #FFFFFF;  /* card/surface (components reference this) */
+  --color-card:       #FFFFFF;
   --color-surface:    #FFFFFF;
-  --color-text:       #1E2A4A;
-  --color-text-muted: #6B7A99;
-  --color-border:     rgba(37,99,235,0.10);
+  --color-text:       #16213A;
+  --color-text-muted: #5A6A85;
+  --color-border:     #E4E8F0;
 
-  /* Neo shadow palette (base #EEF3FF → light #FFF, dark #C2CCDF) */
+  /* legacy aliases (kept so old refs still resolve) */
   --neo-light: #FFFFFF;
-  --neo-dark:  #C2CCDF;
+  --neo-dark:  #CDD5E3;
 
-  /* Shadow system */
-  --shadow-neo:          6px 6px 16px #C2CCDF, -6px -6px 16px #FFFFFF;
-  --shadow-neo-sm:       3px 3px 8px  #C2CCDF, -3px -3px 8px  #FFFFFF;
-  --shadow-neo-lg:      12px 12px 28px #C2CCDF,-12px -12px 28px #FFFFFF;
-  --shadow-neo-inset:    inset 4px 4px 10px #C2CCDF, inset -4px -4px 10px #FFFFFF;
-  --shadow-neo-inset-sm: inset 2px 2px 5px  #C2CCDF, inset -2px -2px 5px  #FFFFFF;
-  --shadow-float:        0 16px 40px rgba(37,99,235,0.22);
+  /* Flat shadow system — subtle elevation, bordered inputs */
+  --shadow-neo:          0 1px 3px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.04);
+  --shadow-neo-sm:       0 1px 2px rgba(16,24,40,0.06);
+  --shadow-neo-lg:       0 6px 20px rgba(16,24,40,0.10);
+  --shadow-neo-inset:    inset 0 0 0 1px var(--color-border);
+  --shadow-neo-inset-sm: inset 0 0 0 1px var(--color-border);
+  --shadow-float:        0 10px 28px rgba(16,24,40,0.12);
+  --shadow-card-hover:   0 8px 24px rgba(16,24,40,0.10);
 
-  /* Glassmorphism (used sparingly) */
-  --glass-bg:     rgba(232,237,242,0.75);
-  --glass-border: rgba(255,255,255,0.55);
-  --glass-blur:   18px;
+  /* Card border helper */
+  --border-card: 1px solid var(--color-border);
 
-  /* Shape */
-  --radius:    1.25rem;  /* 20px */
-  --radius-sm: 0.875rem; /* 14px */
-  --radius-lg: 1.75rem;  /* 28px */
-  --radius-xl: 2.25rem;  /* 36px */
+  /* "Glass" now = solid surface (flat, no blur) */
+  --glass-bg:     rgba(255,255,255,0.92);
+  --glass-border: var(--color-border);
+  --glass-blur:   10px;
+
+  /* Shape — slightly tighter for a flat course UI */
+  --radius:    0.875rem; /* 14px */
+  --radius-sm: 0.625rem; /* 10px */
+  --radius-lg: 1.125rem; /* 18px */
+  --radius-xl: 1.5rem;   /* 24px */
 
   /* Typography */
   --font-heading: 'Kanit', sans-serif;
@@ -62,7 +67,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: var(--color-bg);
+  background-color: var(--color-page);
   color: var(--color-text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -78,37 +83,36 @@ h1, h2, h3, h4, h5, h6 {
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; }
 
-/* ─── Neo utilities ─── */
+/* ─── Card / surface utilities (flat) ─── */
 .neo-card {
   background: var(--color-card);
+  border: var(--border-card);
   border-radius: var(--radius);
   box-shadow: var(--shadow-neo);
-  transition: box-shadow 0.22s ease, transform 0.22s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 .neo-card-tap:active {
-  transform: scale(0.983);
-  box-shadow: var(--shadow-neo-inset);
+  transform: scale(0.99);
 }
 
 .neo-btn {
-  box-shadow: var(--shadow-neo-sm);
   border-radius: var(--radius-sm);
-  transition: all 0.18s ease;
+  transition: all 0.16s ease;
 }
 .neo-btn:active {
-  box-shadow: var(--shadow-neo-inset-sm);
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .neo-inset {
   background: var(--color-bg);
+  border: var(--border-card);
   border-radius: var(--radius);
-  box-shadow: var(--shadow-neo-inset);
 }
 
 /* ─── Horizontal scroll row (mobile card strips) ─── */
+/* note: display is set via Tailwind `flex` on the element so responsive
+   variants like `lg:hidden` can override it (equal-specificity cascade) */
 .scroll-row {
-  display: flex;
   gap: 0.875rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -119,12 +123,10 @@ img { max-width: 100%; }
 .scroll-row::-webkit-scrollbar { display: none; }
 .scroll-row > * { scroll-snap-align: start; flex-shrink: 0; }
 
-/* ─── Glass ─── */
+/* ─── Surface bar (was glass; now flat solid) ─── */
 .glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
+  background: #FFFFFF;
+  border: 1px solid var(--color-border);
 }
 
 /* ─── Gradient ─── */

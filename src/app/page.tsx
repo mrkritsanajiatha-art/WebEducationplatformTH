@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import {
   Bot, GraduationCap, BookOpen, Crown, Users, Download,
   Newspaper, Ticket, FileText, BarChart2, ChevronRight,
-  Sparkles, type LucideIcon,
+  Sparkles,
 } from 'lucide-react'
 import { PublicPageLayout } from '@/components/layout/PublicPageLayout'
+import { CourseCard, type CourseCardData } from '@/components/course/CourseCard'
 import { defaultSiteConfig } from '@/config/site'
 
 export const metadata: Metadata = {
@@ -69,11 +69,11 @@ const CAT_CARDS = [
 ]
 
 /* ─── Featured courses ─── */
-const COURSES = [
-  { title: 'พัฒนา PA ด้วย AI ยุคใหม่', instructor: 'อ.ดร.สมหวัง', price: 'ฟรี',  tag: 'ฮิต',    Icon: Bot },
-  { title: 'Prompt สำหรับครูไทย',       instructor: 'อ.รัตนา',     price: '฿490', tag: 'ใหม่',   Icon: FileText },
-  { title: 'วิจัยในชั้นเรียน 5 บท',    instructor: 'ผศ.ดร.วิรัช', price: '฿290', tag: 'แนะนำ',  Icon: BarChart2 },
-  { title: 'นวัตกรรมห้องเรียน 2567',   instructor: 'อ.ชลิดา',     price: '฿390', tag: 'ยอดฮิต', Icon: BookOpen },
+const COURSES: CourseCardData[] = [
+  { href: '/courses', title: 'พัฒนา PA ด้วย AI ยุคใหม่ สำหรับครูไทย', instructor: 'อ.ดร.สมหวัง วิทยา', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 'free', rating: 4.9, reviews: 688, learners: 3820, durationHrs: 6, badge: 'ฮิต', Icon: Bot, accent: ['#1E3A8A', '#2563EB'] },
+  { href: '/courses', title: 'Prompt Engineering สำหรับครูไทย', instructor: 'อ.รัตนา เทคโน', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 490, rating: 4.7, reviews: 176, learners: 980, durationHrs: 7, badge: 'ใหม่', Icon: FileText, accent: ['#312E81', '#7C3AED'] },
+  { href: '/courses', title: 'วิจัยในชั้นเรียน 5 บท ทำได้จริง', instructor: 'ผศ.ดร.วิรัช ปัญญา', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 290, rating: 4.8, reviews: 302, learners: 1680, durationHrs: 5, badge: 'แนะนำ', Icon: BarChart2, accent: ['#0C4A2E', '#059669'] },
+  { href: '/courses', title: 'นวัตกรรมห้องเรียน 2567 Active Learning', instructor: 'อ.ชลิดา ออกแบบ', org: 'สมาพันธ์แพลตฟอร์มฯ', price: 390, rating: 4.6, reviews: 210, learners: 2100, durationHrs: 5, badge: 'ฮิต', Icon: BookOpen, accent: ['#78350F', '#D97706'] },
 ]
 
 const STATS = [
@@ -82,13 +82,6 @@ const STATS = [
   { value: '48',     label: 'หลักสูตร' },
   { value: '3,800+', label: 'ผู้เรียน' },
 ]
-
-const TAG_STYLE: Record<string, { bg: string; color: string }> = {
-  ฮิต:   { bg: '#FEE2E2', color: '#B91C1C' },
-  ใหม่:  { bg: '#DCFCE7', color: '#15803D' },
-  แนะนำ: { bg: '#DBEAFE', color: '#1D4ED8' },
-  ยอดฮิต:{ bg: '#EDE9FE', color: '#6D28D9' },
-}
 
 /* ─── Page ─── */
 export default function HomePage() {
@@ -241,12 +234,14 @@ export default function HomePage() {
             <SectionHead title="หลักสูตรแนะนำ" sub="เริ่มเรียนได้เลยวันนี้" href="/courses" />
 
             {/* Mobile: scroll */}
-            <div className="lg:hidden scroll-row">
-              {COURSES.map(c => <CourseCard key={c.title} {...c} />)}
+            <div className="flex lg:hidden scroll-row">
+              {COURSES.map(c => (
+                <div key={c.title} className="w-52"><CourseCard data={c} /></div>
+              ))}
             </div>
             {/* Desktop: grid */}
             <div className="hidden lg:grid grid-cols-4 gap-4">
-              {COURSES.map(c => <CourseCard key={c.title} {...c} desktop />)}
+              {COURSES.map(c => <CourseCard key={c.title} data={c} />)}
             </div>
           </section>
 
@@ -317,26 +312,3 @@ function SectionHead({ title, sub, href }: { title: string; sub?: string; href: 
   )
 }
 
-/* ─── Course card ─── */
-function CourseCard({ title, instructor, price, tag, Icon, desktop = false }: {
-  title: string; instructor: string; price: string; tag: string; Icon: LucideIcon; desktop?: boolean
-}) {
-  const t = TAG_STYLE[tag] ?? { bg: '#E5E7EB', color: '#374151' }
-  return (
-    <div className={`${desktop ? '' : 'w-40 flex-shrink-0'} rounded-xl overflow-hidden active:scale-[0.97] transition-transform`}
-      style={{ boxShadow: 'var(--shadow-neo)', background: 'var(--color-bg)' }}>
-      <div className="h-24 flex items-center justify-center"
-        style={{ boxShadow: 'var(--shadow-neo-inset)', background: 'var(--color-bg)' }}>
-        <Icon size={34} strokeWidth={1.2} style={{ color: 'var(--color-primary)', opacity: 0.65 }} />
-      </div>
-      <div className="p-3">
-        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: t.bg, color: t.color }}>{tag}</span>
-        <p className="text-xs font-semibold leading-snug mt-1.5 mb-1 line-clamp-2">{title}</p>
-        <p className="text-[10px] mb-2" style={{ color: 'var(--color-text-muted)' }}>{instructor}</p>
-        <p className="text-sm font-extrabold" style={{ color: price === 'ฟรี' ? '#15803D' : 'var(--color-primary)', fontFamily: 'var(--font-heading)' }}>
-          {price}
-        </p>
-      </div>
-    </div>
-  )
-}
